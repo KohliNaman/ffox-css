@@ -1,0 +1,147 @@
+:root {
+  --tab-block-margin: 0 !important;
+}
+.tab-context-line {
+  margin-top: 0 !important;
+}
+#tabbrowser-tabs {
+  --scrollbutton-block-border: 0px;
+}
+#scrollbutton-up,
+#scrollbutton-down {
+  border-block: var(--scrollbutton-block-border, initial) !important;
+}
+/* Reposition the container color bar to the sides of the tab */
+
+#tabbrowser-tabs .tab-context-line {
+  display: none;
+}
+
+#tabbrowser-tabs .tab-background {
+  border-right: solid 2px var(--identity-icon-color) !important;
+  border-left: solid 2px var(--identity-icon-color) !important;
+  /* border-bottom: ;*/
+
+  transition: all 0.15s ease-in-out !important;
+}
+
+#tabbrowser-tabs .tab-background[selected="true"] {
+  border-right: solid 4px var(--identity-icon-color, #fff) !important;
+  border-left: solid 4px var(--identity-icon-color, #fff) !important;
+  /* border-radius: 8% !important;
+  border-bottom: solid 1px var(--identity-icon-color, #fff) !important; */
+}
+
+/* All deselected tabs should have text with lower visibility */
+
+.tab-label:not([selected="true"]) {
+  color: #ddd !important;
+}
+
+/* Remove the small arrow from the search bar, except when hovered */
+
+#searchbar > .search-go-container {
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+}
+
+#searchbar:hover > .search-go-container {
+  animation: 0.35s delayedFadeIn ease-in-out;
+  opacity: 1;
+}
+
+/* Remove additional buttons from the URL bar, but show them on hover with a small delay */
+
+#urlbar-input-container > #page-action-buttons {
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+}
+
+#urlbar-input-container:hover > #page-action-buttons {
+  animation: 0.5s delayedFadeIn ease-in-out;
+  opacity: 1;
+}
+
+@keyframes delayedFadeIn {
+  0% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Hide close buttons on tabs */
+tab[pinned="true"] > stack > hbox > .tab-close-button {
+  display: none !important;
+}
+
+tab[selected="true"] > stack > hbox > .tab-close-button {
+  opacity: 1 !important;
+  display: block !important;
+  transition: 0.25s all ease-in-out !important;
+}
+
+tab[pinned="true"] > stack > hbox > .tab-close-button {
+  display: none !important;
+}
+
+tab:not([selected="true"]) > stack > hbox > .tab-close-button {
+  opacity: 0 !important;
+  transform: scale(0) !important;
+  transition: 0.25s all ease-in-out !important;
+}
+/* ---------------------------------------------------- */
+.tabbrowser-tab:not([pinned])
+  .tab-icon-stack:is([muted], [soundplaying], [activemedia-blocked]) {
+  grid-template-areas: "a s";
+}
+.tabbrowser-tab:not([pinned])
+  .tab-icon-overlay:is([muted], [soundplaying], [activemedia-blocked]) {
+  grid-area: s;
+}
+.tab-icon-overlay,
+.tab-icon-image,
+.tab-throbber {
+  opacity: 1 !important;
+}
+
+.tab-icon-overlay:not([pinned]) {
+  padding: 0px !important;
+  margin-inline: -3px 1px !important;
+}
+
+/* secondary audio label ain't much use with this style, but feel free to remove the next line if you want to show it. */
+.tab-secondary-label {
+  display: none;
+}
+
+/* show the secondary label when video is in PiP */
+.tab-secondary-label[pictureinpicture] {
+  display: -moz-box;
+}
+
+/* Make all tabs small except selected one */
+
+.tabbrowser-tab[fadein]:not([selected]):not([pinned]) {
+  max-width: 125px !important;
+
+  min-width: 25px !important;
+}
+
+/* Apply dimmed background for inactive tabs */
+
+.tabbrowser-tab:hover
+  > .tab-stack
+  > .tab-background:not([selected], [multiselected]) {
+  background-color: color-mix(in srgb, currentColor 50%, transparent);
+}
+
+.tabbrowser-tab
+  > .tab-stack
+  > .tab-background:not([selected], [multiselected]) {
+  background-color: color-mix(in srgb, rgb(255, 255, 255) 10%, transparent);
+}
