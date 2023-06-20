@@ -29,7 +29,7 @@
 }
 
 #tabbrowser-tabs .tab-background[selected="true"] {
-  border-right: solid 1px var(--identity-icon-color, #fff) !important;
+  border-right: solid 1px var(--identity-icon-color, ) !important;
   border-left: solid 1px var(--identity-icon-color, #fff) !important;
   border-top: solid 1px var(--identity-icon-color, #fff) !important;
   border-bottom: solid 1px var(--identity-icon-color, #fff) !important;
@@ -121,7 +121,7 @@ tab:not([selected="true"]) > stack > hbox > .tab-close-button {
 }
 
 /* secondary audio label ain't much use with this style, but feel free to remove the next line if you want to show it. */
-.tab-secondary-label {
+.tab-secondary-label { 
   display: none;
 }
 
@@ -130,13 +130,13 @@ tab:not([selected="true"]) > stack > hbox > .tab-close-button {
   display: -moz-box;
 }
 
-/* Make all tabs small except selected one */
+/* Make all tabs small except selected one  */
 
-.tabbrowser-tab[fadein]:not([selected]):not([pinned]) {
+/* .tabbrowser-tab[fadein]:not([selected]):not([pinned]) {
   max-width: 125px !important;
 
   min-width: 25px !important;
-}
+} */
 
 /* Apply dimmed background for inactive tabs */
 
@@ -149,5 +149,111 @@ tab:not([selected="true"]) > stack > hbox > .tab-close-button {
 .tabbrowser-tab
   > .tab-stack
   > .tab-background:not([selected], [multiselected]) {
-  background-color: color-mix(in srgb, rgb(255, 255, 255) 3%, transparent);
+  background-color: color-mix(in srgb, rgb(255, 255, 255) 2%, transparent);
 }
+
+
+
+
+
+
+
+@supports -moz-bool-pref("userChrome.tab.container") {
+  @supports not -moz-bool-pref("userChrome.tabbar.as_titlebar") {
+    @supports not -moz-bool-pref("userChrome.tab.photon_like_contextline") {
+      .tab-context-line {
+        display: none;
+      }
+    }
+    #tabbrowser-tabs {
+      --uc-container-position-x: 9px;
+      --uc-container-position-y-default: 11.5px;
+      --uc-container-position-y: calc(50% + var(--uc-container-position-y-default));
+      --uc-titlechanged-container-position-x: 32%, 50%, 70%;
+    }
+    #tabbrowser-tabs:-moz-locale-dir(rtl) {
+      --uc-container-position-x: -9px;
+    }
+    :root[uidensity="compact"] #tabbrowser-tabs {
+      --uc-container-position-y-default: 10.5px;
+      --uc-titlechanged-container-position-x: 30%, 50%, 70%;
+    }
+    :root[uidensity="touch"] #tabbrowser-tabs {
+      --uc-container-position-y-default: 12.5px;
+    }
+    .tab-content:not([titlechanged])::before {
+      /* Box Model */
+      content: "";
+      display: block;
+      position: absolute;
+      top: 50%;
+      transform: translate(var(--uc-container-position-x), var(--uc-container-position-y));
+      /* Shape */
+      border-bottom: 2px solid var(--identity-icon-color);
+      width: 25%;
+      opacity: 0.75;
+    }
+    .tabbrowser-tab[visuallyselected]:not([pinned]) .tab-content::before {
+      width: calc(100% - 30px);
+      opacity: 1;
+    }
+    #tabbrowser-tabs[closebuttons="activetab"] .tabbrowser-tab[visuallyselected]:not([pinned]) .tab-content::before {
+      width: calc(100% - 33px);
+    }
+    /* Animate */
+    @media (prefers-reduced-motion: no-preference) {
+      .tab-content:not([titlechanged])::before {
+        transition: 0.15s var(--animation-easing-function);
+        transition-property: width, opacity;
+      }
+    }
+    /* Pinned Tab */
+    .tabbrowser-tab[pinned] .tab-content::before {
+      transform: translateY(var(--uc-container-position-y));
+      width: 16px;
+    }
+    @supports -moz-bool-pref("userChrome.tab.close_button_at_pinned") {
+      .tabbrowser-tab[pinned][visuallyselected]:not([busy]):hover .tab-content::before {
+        opacity: 0;
+      }
+    }
+    /* Pinned Tab - Titlechanged Indicator override */
+    .tabbrowser-tab:is([image], [pinned])[usercontextid] > .tab-stack > .tab-content[attention]:not([selected="true"]),
+    .tabbrowser-tab[usercontextid] > .tab-stack > .tab-content[pinned][titlechanged]:not([selected="true"]) {
+      /* Original: radial-gradient(circle, var(--attention-icon-color), var(--attention-icon-color) 2px, transparent 2px); */
+      --dotted-identity-image: radial-gradient(
+        circle,
+        var(--identity-icon-color),
+        var(--identity-icon-color) 2px,
+        transparent 2px
+      );
+      background-image: var(--dotted-identity-image), var(--dotted-identity-image), var(--dotted-identity-image) !important;
+      background-position-x: var(--uc-titlechanged-container-position-x) !important;
+    }
+    .tabbrowser-tab:is([image], [pinned]) > .tab-stack > .tab-content[attention]:not([selected="true"]),
+    .tabbrowser-tab > .tab-stack > .tab-content[pinned][titlechanged]:not([selected="true"]) {
+      /* Original: center bottom calc(6.5px + var(--tabs-navbar-shadow-size)); */
+      background-position-y: top var(--uc-container-position-y) !important;
+    }
+    /* Pinned Tab - Titlechanged & soundplaying */
+    .tabbrowser-tab:is([image], [pinned])[usercontextid]:is([soundplaying], [muted], [activemedia-blocked])
+      > .tab-stack
+      > .tab-content[attention]:not([selected="true"]),
+    .tabbrowser-tab[usercontextid]:is([soundplaying], [muted], [activemedia-blocked])
+      > .tab-stack
+      > .tab-content[pinned][titlechanged]:not([selected="true"]) {
+      --uc-titlechanged-container-position-x: calc(32% - 1px), calc(50% - 1px), calc(70% - 1px);
+    }
+    :root[uidensity="compact"]
+      .tabbrowser-tab:is([image], [pinned])[usercontextid]:is([soundplaying], [muted], [activemedia-blocked])
+      > .tab-stack
+      > .tab-content[attention]:not([selected="true"]),
+    :root[uidensity="compact"]
+      .tabbrowser-tab[usercontextid]:is([soundplaying], [muted], [activemedia-blocked])
+      > .tab-stack
+      > .tab-content[pinned][titlechanged]:not([selected="true"]) {
+      --uc-titlechanged-container-position-x: calc(30% - 1px), calc(50% - 1px), calc(70% - 1px);
+    }
+  }
+}
+
